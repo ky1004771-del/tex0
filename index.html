@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+  
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>SIGNIEL · 세금 납부 인증</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;500;600&family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+  
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#080d27">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="SIGNIEL">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- 배경 / 효과 레이어 (기능 무관) -->
+  <div class="bg" aria-hidden="true"></div>
+  <div class="bg-shade" aria-hidden="true"></div>
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <div class="page">
+
+    <!-- =====================================
+         BRAND
+    ====================================== -->
+
+    <div class="brand">
+
+      <div class="brand-small">
+           동글랜드4
+      </div>
+
+      <div class="brand-main">
+        SIGNIEL
+      </div>
+
+      <div class="brand-line"></div>
+
+      <div class="brand-sub">
+        
+        세금 인증 서비스
+        
+      </div>
+
+    </div>
+
+    <!-- =====================================
+         MAIN CARD
+    ====================================== -->
+
+    <main class="card">
+
+      <div class="card-header">
+
+        <div>
+
+          <div class="section-label">
+            인증
+          </div>
+
+          <h1 class="section-title">
+            세금 납부 인증
+          </h1>
+
+        </div>
+
+        <div class="secure">
+
+          <span class="secure-icon">
+            ✓
+          </span>
+
+          개인 인증 · 보안
+
+        </div>
+
+      </div>
+
+      <div class="frame">
+
+        <div
+          id="pasteArea"
+          class="paste-area"
+          tabindex="0"
+        >
+
+          <div class="diamond-wrap">
+
+            <div class="diamond"></div>
+
+          </div>
+
+          <div class="paste-title">
+            인증사진을 붙여넣어 주세요
+          </div>
+
+          <p class="paste-description">
+
+            입금 메시지가 확인되는 인증사진을 복사한 후<br>
+
+            이 화면에서
+            <strong>Ctrl + V</strong>
+            를 눌러주세요.
+
+          </p>
+
+          <div class="paste-note">
+
+            사진이 입력되면 자동으로 분석 및 납부 등록됩니다.
+
+          </div>
+
+          <div class="paste-button">
+            사진 붙여넣기 · 자동 인증
+          </div>
+
+          <input
+            id="mobileImageInput"
+            type="file"
+            accept="image/*"
+            style="display:none;"
+          >
+
+          <div
+            class="paste-button"
+            onclick="openTaxStatus()"
+            style="margin-top:15px; cursor:pointer;"
+          >
+            내 납부현황 확인
+          </div>
+
+          <div
+            id="loading"
+            class="loading"
+          >
+
+            <div class="loading-line">
+              <span></span>
+            </div>
+
+            <div class="loading-text">
+              인증사진을 분석하고 있습니다
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- RESULT -->
+
+        <div
+          id="result"
+          class="result"
+        >
+
+          <div class="result-box">
+
+            <div class="result-label">
+              인증 결과
+            </div>
+
+            <div
+              id="resultName"
+              class="result-name"
+            ></div>
+
+            <div class="result-row">
+
+              <span class="result-key">
+                게임 ID
+              </span>
+
+              <span
+                id="resultId"
+                class="result-value"
+              ></span>
+
+            </div>
+
+            <div class="result-row">
+
+              <span class="result-key">
+                직업
+              </span>
+
+              <span
+                id="resultJob"
+                class="result-value"
+              ></span>
+
+            </div>
+
+            <div class="result-row">
+
+              <span class="result-key">
+                이번 납부
+              </span>
+
+              <span
+                id="resultAmount"
+                class="result-value gold"
+              ></span>
+
+            </div>
+
+            <div class="result-row">
+
+              <span class="result-key">
+                현재 세금 잔액
+              </span>
+
+              <span
+                id="resultBalance"
+                class="result-value gold"
+              ></span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- STATUS -->
+
+        <div
+          id="status"
+          class="status"
+        ></div>
+
+      </div>
+
+    </main>
+
+    <!-- =====================================
+         STATS
+    ====================================== -->
+
+    <div class="stats">
+
+      <div class="stat">
+
+        <div class="stat-label">
+          전체 인원
+        </div>
+
+        <div
+          id="totalCount"
+          class="stat-value"
+        >
+          -
+        </div>
+
+      </div>
+
+      <div class="stat">
+
+        <div class="stat-label">
+          납부 인원
+        </div>
+
+        <div
+          id="paidCount"
+          class="stat-value gold"
+        >
+          -
+        </div>
+
+      </div>
+
+      <div class="stat">
+
+        <div class="stat-label">
+          미납 인원
+        </div>
+
+        <div
+          id="unpaidCount"
+          class="stat-value"
+        >
+          -
+        </div>
+
+      </div>
+
+      <div class="stat">
+
+        <div class="stat-label">
+          현재 세금 잔액
+        </div>
+
+        <div
+          id="taxBalance"
+          class="stat-value gold"
+        >
+          -
+        </div>
+
+      </div>
+
+      <div class="stat">
+
+        <div class="stat-label">
+          현재 벌금
+        </div>
+
+        <div
+          id="fineBalance"
+          class="stat-value"
+        >
+          -
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- =====================================
+         RECENT EXPENSES
+    ====================================== -->
+
+    <section class="expense-feed">
+
+      <div class="expense-feed-header">
+
+        <div>
+          <div class="expense-feed-kicker">TAX EXPENSE ACTIVITY</div>
+          <div class="expense-feed-title">최근 세금 지출 내역</div>
+        </div>
+
+        <div class="expense-feed-balance">
+          <span class="expense-feed-balance-label">현재 세금 잔액</span>
+          <span id="expenseBalance" class="expense-feed-balance-value">-</span>
+        </div>
+
+      </div>
+
+      <div id="expenseList" class="expense-list">
+        <div class="expense-empty">세금 지출 내역을 불러오는 중입니다.</div>
+      </div>
+
+    </section>
+
+    <!-- =====================================
+         FOOTER
+    ====================================== -->
+
+    <footer class="footer">
+
+      <div class="footer-main">
+        SIGNIEL VILLAGE · TAX PAYMENT SERVICE
+      </div>
+
+      <div class="footer-sub">
+        PRIVATE &amp; SECURE
+      </div>
+
+      <div class="creator">
+        제작자 : 시그니엘 이장 아리
+      </div>
+
+    </footer>
+
+  </div>
+
+  <!-- =====================================
+       POPUP
+       대기 / 성공 / 실패
+  ====================================== -->
+
+  <div
+    id="popupOverlay"
+    class="popup-overlay"
+  >
+
+    <div
+      id="popup"
+      class="popup processing"
+    >
+
+      <div class="popup-inner">
+
+      <div class="popup-kicker">SIGNIEL</div>
+
+      <div
+        id="popupIcon"
+        class="popup-icon"
+      >
+        ◇
+      </div>
+
+      <h2
+        id="popupTitle"
+        class="popup-title"
+      >
+        인증사진 확인 중
+      </h2>
+
+      <p
+        id="popupText"
+        class="popup-text"
+      >
+        인증사진을 분석하고 있습니다.
+        잠시만 기다려주세요.
+      </p>
+
+      <button
+        id="popupButton"
+        class="popup-button"
+        type="button"
+        onclick="closePopup()"
+        style="display:none;"
+      >
+        확인
+      </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  
+
+<!-- =========================================
+     SIGNIEL TAX STATUS POPUP
+========================================= -->
+
+<div 
+  id="taxStatusModal" 
+  class="popup-overlay"
+>
+
+  <div class="popup tax-popup">
+
+  <div class="popup-inner">
+
+    <div class="popup-kicker">SIGNIEL TAX STATUS</div>
+
+    <h2 class="popup-title">납부 현황 조회</h2>
+
+    <p class="popup-text">
+      닉네임(한글/영문)을 입력해주세요.
+    </p>
+
+   <input 
+  id="taxNickname"
+  class="tax-status-input"
+  placeholder="한글/영문 닉네임 입력"
+  autocomplete="off"
+  spellcheck="false"
+  onkeydown="
+  if(event.key==='Enter'){
+    searchTaxStatus();
+  }
+  "
+    >
+
+    <div 
+      id="taxResult"
+      style="width:100%;"
+    >
+    </div>
+
+    <button
+      class="popup-button ghost"
+      onclick="closeTaxStatus()"
+    >
+      닫기
+    </button>
+
+  </div>
+
+  </div>
+
+</div>
+
+<!-- =========================================
+     VISUAL FX · 눈 + 골드 반짝임 (기능과 무관, 지워도 동작 동일)
+========================================= -->
+
+<!-- =========================================
+     BACKGROUND IMAGE
+     * 아래 url(...) 안을 이미지 주소(https://...)로 바꾸면 파일이 훨씬 가벼워집니다.
+========================================= -->
+
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script src="app.js"></script>
+<script src="taxstatus.js"></script>
+<script src="fx.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
